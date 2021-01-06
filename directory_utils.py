@@ -52,9 +52,33 @@ def get_linux_root(path: Path) -> Path:
         raise TypeError
     try:
         ml.log_event('get linux root path', event_completed=False)
-        root_path = path.parts[0]
+        root_path = path.root
         ml.log_event('get linux root path {}'.format(root_path), event_completed=True)
         return root_path
+    except OSError as o_err:
+        ml.log_exception(o_err)
+
+
+def get_linux_user_dir(path: Path) -> Path:
+    if not is_path(path):
+        raise TypeError
+    try:
+        ml.log_event('get linux root path', event_completed=False)
+        username = str(path.parts[2])
+        ml.log_event('get linux username {}'.format(username), event_completed=True)
+        return username
+    except OSError as o_err:
+        ml.log_exception(o_err)
+
+
+def get_linux_username(path: Path) -> Path:
+    if not is_path(path):
+        raise TypeError
+    try:
+        ml.log_event('get linux root path', event_completed=False)
+        username = str(path.parts[2])
+        ml.log_event('get linux username {}'.format(username), event_completed=True)
+        return username
     except OSError as o_err:
         ml.log_exception(o_err)
 
@@ -121,18 +145,26 @@ def move_files(files: list, src_path: Path, dest_path: Path) -> bool:
         pass
 
 
-def os_is_posix(os_name: str) -> bool:
+def os_is_posix() -> bool:
     if 'six' in get_os_name():
         return True
     return False
 
 
+def __debug():
+    os_name = get_os_name()
+    linux_root = get_linux_root(path=Path(getcwd()))
+    pass
+
+
 if __name__ == '__main__':
-    from data_src.CONSTANTS import DATA_PATH, DOWNLOADS_PATH
+    from data_src.CONSTANTS import DATA_PATH, DEBUG, DOWNLOADS_PATH
+    if DEBUG:
+        __debug()
     pass
 else:
     from .data_src.CONSTANTS import DATA_PATH, DOWNLOADS_PATH
-    if not os_is_posix(get_os_name()):
+    if not os_is_posix():
         event = 'unsupported OS, may be unstable'
         print(event)
         ml.log_event(event, level=ml.WARN, announce=True)
