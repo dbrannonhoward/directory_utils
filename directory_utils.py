@@ -34,7 +34,7 @@ def get_all_files_with_valid_extensions(files: list, valid_extensions: list) -> 
                 if extension in file:
                     files_with_extension.append(file)
         if len(files_with_extension) < 1:
-            raise OSError
+            raise OSError('no files found with extensions {} in files {}'.format(valid_extensions, files))
         ml.log_event('get all files with valid extensions {}'.format(valid_extensions), event_completed=True)
         return files_with_extension
     except IndexError as i_err:
@@ -42,14 +42,15 @@ def get_all_files_with_valid_extensions(files: list, valid_extensions: list) -> 
 
 
 def get_cwd_as_path() -> Path:
+    path = Path(getcwd())
+    if not is_path(path):
+        raise TypeError('{} object is not of type {}'.format(path, Path))
     return Path(getcwd())
 
 
 def get_data_path() -> Path:
     path = get_cwd_as_path()
     ml.log_event('get data path', event_completed=False)
-    if not is_path(path):
-        raise TypeError
     try:
         data_path = Path(str(path), DATA_PATH)
         ml.log_event('get data path {}'.format(data_path), event_completed=True)
@@ -71,8 +72,6 @@ def get_linux_root() -> Path:
 
 def get_linux_user_dir() -> Path:
     path = get_cwd_as_path()
-    if not is_path(path):
-        raise TypeError
     try:
         ml.log_event('get linux root path', event_completed=False)
         user_dir = str(path.parts[2])
@@ -84,8 +83,6 @@ def get_linux_user_dir() -> Path:
 
 def get_linux_username() -> Path:
     path = get_cwd_as_path()
-    if not is_path(path):
-        raise TypeError
     try:
         ml.log_event('get linux root path', event_completed=False)
         username = str(path.parts[2])
@@ -98,8 +95,6 @@ def get_linux_username() -> Path:
 def get_os_downloads_path() -> Path:
     ml.log_event('get downloads path', event_completed=False)
     path = get_cwd_as_path()
-    if not is_path(path):
-        raise TypeError
     try:
         downloads_parent = Path()
         downloads_path = build_path("downloads")
@@ -117,8 +112,6 @@ def get_os_name() -> str:
 def get_project_home() -> Path:
     path = get_cwd_as_path()
     ml.log_event(event='get project home {}'.format(path), event_completed=False)
-    if not is_path(path):
-        raise TypeError
     try:
         ml.log_event(event='get project home {}'.format(path), event_completed=True)
         return Path(str(path.parent), path.parts[-1])
@@ -140,7 +133,7 @@ def get_path_object_at_cwd() -> Path:
 def is_path(path: Path) -> bool:
     if path is None:
         ml.log_event('path is none', level=ml.ERROR)
-        raise IndexError
+        raise Exception('object {} is not of type {}'.format(path, Path))
     try:
         if isinstance(path, Path):
             return True
@@ -152,8 +145,6 @@ def is_path(path: Path) -> bool:
 def move_files(files: list, src_path: Path, dest_path: Path) -> bool:
     # TODO work in progress
     ml.log_event('moving files {} from {} to {}'.format(files, src_path, dest_path), event_completed=False)
-    if not is_path(src_path) or not is_path(dest_path):
-        raise TypeError
     for file in files:
         pass
 
