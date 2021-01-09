@@ -7,6 +7,16 @@ from pathlib2 import Path
 ml = MinimalLog(__name__)
 
 
+def append_path_to_filename(path: Path, filename: str) -> str:
+    full_file_path = Path(path, filename)
+    return full_file_path
+
+
+def build_full_path_to_filename(path: Path, filename: str) -> Path:
+    full_path = Path(path, filename)
+    return full_path
+
+
 def build_path_to(destination: str, using_known_path: Path, destination_in_home: bool) -> Path:
     event, known_path, built_path = 'returning {} as {}', using_known_path, Path()
     assert (isinstance(known_path, Path)), '{} is invalid object type {}'.format(known_path, type(known_path))
@@ -36,7 +46,7 @@ def destination_in_path(destination: str, path: Path) -> bool:
     return False
 
 
-def filter_files_by_extension(files: list, valid_extensions: list) -> list:
+def filter_files_by_ext(files: list, valid_extensions: list) -> list:
     ml.log_event('get all files with valid extensions {}'.format(valid_extensions), event_completed=False)
     files_with_extension = list()
     try:
@@ -152,7 +162,7 @@ def get_os_name() -> str:
     return name  # from imports
 
 
-def get_path_object_at_cwd() -> Path:
+def get_path_at_cwd() -> Path:
     event = 'get path object '
     ml.log_event(event, event_completed=False)
     try:
